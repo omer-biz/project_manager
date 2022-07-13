@@ -1,0 +1,16 @@
+[
+  {
+    "name": "hellhound",
+    "directory": "$HOME/Documents/CTF/HackTheBox/Machines/hellhound",
+    "score": 33.3,
+    "last_update": 1657649944,
+    "category_index": 1
+  },
+  {
+    "name": "Brain Fuck",
+    "directory": "$HOME/Documents/HackTheBox/Machines/hellhound",
+    "score": 33,
+    "last_update": 1657649942,
+    "category_index": 3
+  }
+]
