@@ -4,6 +4,7 @@
 #define MAX_FILENAME              255
 #define PROJECT_NAME_LENGTH       127
 #define MAX_CATEGORY_NAME         127
+#define CHUNK_SIZE                1024
 
 #define PROJECTS_FILEPATH         "./projects.json"
 

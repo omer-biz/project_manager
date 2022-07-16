@@ -2,15 +2,55 @@
   {
     "name": "hellhound",
     "directory": "$HOME/Documents/CTF/HackTheBox/Machines/hellhound",
-    "score": 33.3,
-    "last_update": 1657649944,
-    "category_index": 1
+    "score": 32.20,
+    "last_update": 3890619431,
+    "category_index": 770364455,
+    "time_spent": 687871015,
+    "progress": 619656247
   },
   {
     "name": "Brain Fuck",
-    "directory": "$HOME/Documents/HackTheBox/Machines/hellhound",
-    "score": 33,
-    "last_update": 1657649942,
-    "category_index": 3
+    "directory": "$HOME/Documents/HackTheBox/Machines/breainfuck",
+    "score": 681465086.00,
+    "last_update": 342134,
+    "category_index": 770364670,
+    "time_spent": 687871230,
+    "progress": 619656462
+  },
+  {
+    "name": "The Needle",
+    "directory": "$HOME/Documents/HackTheBox/Machines/theneedle",
+    "score": 681465086.00,
+    "last_update": 3890619646,
+    "category_index": 770364670,
+    "time_spent": 687871230,
+    "progress": 619656462
+  },
+  {
+    "name": "echo1",
+    "directory": "$HOME/Documents/HackTheBox/Machines/theneedle",
+    "score": 681465086.00,
+    "last_update": 3890619646,
+    "category_index": 770364670,
+    "time_spent": 687871230,
+    "progress": 619656462
+  },
+  {
+    "name": "memcpy",
+    "directory": "$HOME/Documents/HackTheBox/Machines/theneedle",
+    "score": 681465086.00,
+    "last_update": 3890619646,
+    "category_index": 770364670,
+    "time_spent": 687871230,
+    "progress": 619656462
+  },
+  {
+    "name": "syscall",
+    "directory": "$HOME/Documents/HackTheBox/Machines/theneedle",
+    "score": 681465086.00,
+    "last_update": 3890619646,
+    "category_index": 770364670,
+    "time_spent": 687871230,
+    "progress": 619656462
   }
 ]
