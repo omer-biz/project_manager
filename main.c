@@ -13,26 +13,56 @@
 
 #include "config.h"
 #include "project.h"
+#include "argp_config.h"
 
-int load_projects_from_file(const char *filepath, struct project **prj);
+int load_projects_from_file(const char *filepath, struct project **prj, struct project **lprj);
 int save_to_file(struct project *first);
+int new_project_in_pwd(struct project *last);
+void list_all_projects(struct project *first);
 
 int main(int argc, char **argv) {
+  
+  struct argp_opts opts = { 0 };
+  argp_parse(&argp, argc, argv, 0, 0, &opts);
 
-  // TODO
-  // check for categories
-  //  prompt for defaults
-  //  if there is no let the user create
 
   // check for projects
   struct project *first_project = NULL;
-  load_projects_from_file(PROJECTS_FILEPATH, &first_project);
+  struct project *last_project = NULL;
+  int ret;
+  ret = load_projects_from_file(PROJECTS_FILEPATH, &first_project, &last_project);
+
+  if (opts.list_projects == 1) {
+    list_all_projects(first_project);
+    exit(0);
+  }
+
+  if (opts.new_project == 1) {
+    new_project_in_pwd(last_project);
+  }
+
   save_to_file(first_project);
+}
 
-  setlocale(LC_ALL, "");
-  initscr();
-
-  endwin();
+void list_all_projects(struct project *first) {
+  for (; first != NULL; first = first->next) {
+    printf(
+      "name: \"%s\"\n"
+      "directory: \"%s\"\n"
+      "score: %.2f\n"
+      "last_update: %lu\n"
+      "category_index: %u\n"
+      "time_spent: %lu\n"
+      "progress: %u\n\n\n",
+      first->name,
+      first->directory,
+      first->score,
+      first->last_update,
+      first->category_index,
+      first->time_spent,
+      first->progress
+    );
+  }
 }
 
 int save_to_file(struct project *first) {
@@ -82,7 +112,7 @@ int save_to_file(struct project *first) {
   return 0;
 }
 
-int load_projects_from_file(const char *filepath, struct project **prj) {
+int load_projects_from_file(const char *filepath, struct project **prj, struct project **lprj) {
   struct stat st;
   char *buffer;
   const nx_json *json;
@@ -110,6 +140,11 @@ int load_projects_from_file(const char *filepath, struct project **prj) {
         exit(-2);
       }
 
+      // empty array
+      if (json->children.first == NULL) {
+        return -7; 
+      }
+
       CREATE_AND_LINK_PROJECT(json->children.first, NULL, *prj);
       const nx_json *ptr;
       struct project *prnt, *chld;
@@ -119,17 +154,56 @@ int load_projects_from_file(const char *filepath, struct project **prj) {
         CREATE_AND_LINK_PROJECT(ptr, prnt, chld);
       }
 
+      *lprj = chld;
+
       nx_json_free(json);
       free(buffer);
 
     } else {
-      fprintf(stderr, "can't parse file");
+      fprintf(stderr, "can't open file");
       exit(-3);
     }
   } else {
     fprintf(stderr, "can't find file");
-    exit(-1);
+    return -1;
   }
+
+  return 0;
+}
+
+int new_project_in_pwd(struct project *lprj) {
+  struct project *prj;
+  char *buffer;
+
+  initscr();
+
+  addstr("New here? Add a project.\n");
+
+  prj = malloc(sizeof(struct project));
+  addstr("Project Name: ");
+  getnstr(prj->name, PROJECT_NAME_LENGTH - 1);
+
+  // get the current directory
+  if ((buffer = getcwd(NULL, 0)) != NULL) {
+    strncpy(prj->directory, buffer, MAX_FILENAME - 1);
+    free(buffer);
+    buffer = NULL;
+  } else if ((buffer = getenv("PWD")) != NULL) {
+    strncpy(prj->directory, buffer, MAX_FILENAME - 1);
+  } else {
+    addstr("Can't set the directory\nset it manually: ");
+    getnstr(prj->directory, MAX_FILENAME - 1);
+  }
+
+  addstr("The directory is at: ");
+  addstr(prj->directory);
+  addstr("\n");
+
+  refresh();
+  lprj->next = prj;
+
+  getch();
+  endwin();
 
   return 0;
 }
