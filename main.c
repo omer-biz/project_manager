@@ -8,6 +8,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <libgen.h>
 
 #include "nxjson/nxjson.h"
 
@@ -17,7 +18,7 @@
 
 int load_projects_from_file(const char *filepath, struct project **prj, struct project **lprj);
 int save_to_file(struct project *first);
-int new_project_in_pwd(struct project *last);
+int new_project_in_pwd(struct project **last, char *project_name);
 void list_all_projects(struct project *first);
 
 int main(int argc, char **argv) {
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
   }
 
   if (opts.new_project == 1) {
-    new_project_in_pwd(last_project);
+    new_project_in_pwd(&last_project, opts.new_project_name);
   }
 
   save_to_file(first_project);
@@ -49,18 +50,20 @@ void list_all_projects(struct project *first) {
     printf(
       "name: \"%s\"\n"
       "directory: \"%s\"\n"
-      "score: %.2f\n"
-      "last_update: %lu\n"
-      "category_index: %u\n"
-      "time_spent: %lu\n"
-      "progress: %u\n\n\n",
+      /* "score: %.2f\n" */
+      "start_date: %lu\n\n",
+      /* "last_update: %lu\n" */
+      /* "category_index: %u\n" */
+      /* "time_spent: %lu\n" */
+      /* "progress: %u\n\n\n", */
       first->name,
       first->directory,
-      first->score,
-      first->last_update,
-      first->category_index,
-      first->time_spent,
-      first->progress
+      /* first->score, */
+      first->start_date
+      /* first->last_update, */
+      /* first->category_index, */
+      /* first->time_spent, */
+      /* first->progress */
     );
   }
 }
@@ -73,6 +76,7 @@ int save_to_file(struct project *first) {
     "    \"name\": \"%s\",\n"
     "    \"directory\": \"%s\",\n"
     "    \"score\": %.2f,\n"
+    "    \"start_date\": %llu,\n"
     "    \"last_update\": %llu,\n"
     "    \"category_index\": %u,\n"
     "    \"time_spent\": %llu,\n"
@@ -93,13 +97,14 @@ int save_to_file(struct project *first) {
 
   fwrite("[\n", 2, 1, conf_file);
   for (ptr = first; ptr != NULL; ptr = ptr->next) {
-    snprintf(buffer, CHUNK_SIZE - 3, fmt,
+    snprintf(buffer, CHUNK_SIZE - 3, fmt, // possible overflow here
         ptr->name,
         ptr->directory,
         ptr->score,
-        ptr->last_update,
+        ptr->start_date,
         ptr->category_index,
         ptr->time_spent,
+        ptr->last_update,
         ptr->progress
     );
     if (ptr->next != NULL)
@@ -171,17 +176,13 @@ int load_projects_from_file(const char *filepath, struct project **prj, struct p
   return 0;
 }
 
-int new_project_in_pwd(struct project *lprj) {
+int new_project_in_pwd(struct project **lprj, char *project_name) {
   struct project *prj;
   char *buffer;
-
-  initscr();
-
-  addstr("New here? Add a project.\n");
+  char *dir_name;
 
   prj = malloc(sizeof(struct project));
-  addstr("Project Name: ");
-  getnstr(prj->name, PROJECT_NAME_LENGTH - 1);
+  memset(prj, 0, sizeof(struct project));
 
   // get the current directory
   if ((buffer = getcwd(NULL, 0)) != NULL) {
@@ -191,19 +192,23 @@ int new_project_in_pwd(struct project *lprj) {
   } else if ((buffer = getenv("PWD")) != NULL) {
     strncpy(prj->directory, buffer, MAX_FILENAME - 1);
   } else {
-    addstr("Can't set the directory\nset it manually: ");
-    getnstr(prj->directory, MAX_FILENAME - 1);
+    printf("Can't set the directory");
+    exit(-1);
   }
 
-  addstr("The directory is at: ");
-  addstr(prj->directory);
-  addstr("\n");
+  if (project_name != NULL && strlen(project_name) != 0) {
+    strncpy(prj->name, project_name, PROJECT_NAME_LENGTH);
+  } else {
+    // the directory name is the project name, if no name is given
+    dir_name = basename(prj->directory);
+    strncpy(prj->name, dir_name, PROJECT_NAME_LENGTH);
+  }
 
-  refresh();
-  lprj->next = prj;
+  prj->start_date = time(NULL);
 
-  getch();
-  endwin();
+  // make lprj(last pointer) point to the newly created project
+  (*lprj)->next = prj;
+  *lprj = prj;
 
   return 0;
 }

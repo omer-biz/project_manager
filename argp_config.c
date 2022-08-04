@@ -11,6 +11,9 @@ error_t parse_opt(int key, char *arg, struct argp_state *state) {
       break;
     case 'n': // new project
       op->new_project = 1;
+      if (arg != NULL) {
+        strncpy(op->new_project_name, arg, PROJECT_NAME_LENGTH);
+      }
       break;
     default:
       return ARGP_ERR_UNKNOWN;
