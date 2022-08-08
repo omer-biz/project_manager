@@ -1,17 +1,18 @@
+SRC = src/argp_config.c src/main.c src/project.c src/nxjson/nxjson.c
+OBJ = ${SRC:.c=.o}
+ 
+pm: ${OBJ} 
+	cc -O3 -o $@ ${OBJ}
+	strip pm
 
+dbg: ${OBJ}
+	cc -g -o $@ ${OBJ}
+	gdb -q ./dbg
 
-main: clean
-	gcc -o main -lncurses main.c nxjson/nxjson.c
-	./main
-
-dbg:
-	gcc -g -o main -lncurses main.c nxjson/nxjson.c
-
-default:
-	gcc -o demo -lncurses demo.c
-	./demo
-
-clean:
-	rm -fv demo main
+tui: ${OBJ}
+	cc -lncurses -o pm ${OBJ}
 
 .PHONY: clean
+clean:
+	rm -fv pm dbg ${OBJ}
+
