@@ -25,6 +25,9 @@ error_t parse_opt(int key, char *arg, struct argp_state *state) {
       if (arg != NULL)
         strncpy(op->new_project_name, arg, PROJECT_NAME_LENGTH);
       break;
+    case 't':
+      op->activate_tui = 1;
+      break;
     default:
       return ARGP_ERR_UNKNOWN;
   }

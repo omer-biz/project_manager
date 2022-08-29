@@ -13,6 +13,7 @@ static const struct argp_option options[] = {
                                         " if no name is provided the current directory's name will be used" }, 
   { "activate", 'a', "project_name", 0, "Activate a project i.e. cd into the directory and start a shell" },
   { "create_and_activate", 'x', "project_name", OPTION_ARG_OPTIONAL, "Creates and activates a project in the current directory" },
+  { "tui", 't', 0, OPTION_ARG_OPTIONAL, "Activate the tui interface." },
   { 0 }
 };
 
@@ -25,6 +26,7 @@ struct argp_opts {
   int new_project;
   int activate_prj;
   int create_and_activate;
+  int activate_tui;
   char active_project_name[PROJECT_NAME_LENGTH];
   char new_project_name[PROJECT_NAME_LENGTH];
 };

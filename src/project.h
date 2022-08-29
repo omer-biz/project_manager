@@ -32,8 +32,16 @@ struct project {
   struct project *next;
 };
 
+// list of pointers pointing to the individual projects
+extern struct project **indexable_projects;
+
+// number of all the projects on the heap
+extern size_t project_length;
+
 struct project *create_project(const char *name, const char *directory, double score,
     time_t start_date, unsigned int category_index, time_t time_spent, time_t last_update,
     unsigned int progress, struct project *parent);
+
+struct project *search_prj_by_name(char *project_name, struct project *first);
 
 #endif // PROJECT_H

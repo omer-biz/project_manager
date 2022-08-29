@@ -17,12 +17,13 @@
 #include "project.h"
 #include "argp_config.h"
 
+
 int load_projects_from_file(const char *filepath, struct project **prj, struct project **lprj);
 int save_to_file(struct project *first);
 int new_project_in_pwd(struct project **last, struct project **first, char *project_name);
 void list_all_projects(struct project *first);
 void activate_project(struct project *prj);
-struct project *search_prj_by_name(char *project_name, struct project *first);
+void activate_tui(struct project *prj);
 
 int main(int argc, char **argv) {
 
@@ -33,6 +34,10 @@ int main(int argc, char **argv) {
   struct project *last_project = NULL;
   int ret;
   ret = load_projects_from_file(PROJECTS_FILEPATH, &first_project, &last_project);
+
+  if (opts.activate_tui == 1) {
+    activate_tui(first_project);
+  }
 
   if (opts.list_projects == 1) {
     list_all_projects(first_project);
@@ -60,13 +65,43 @@ int main(int argc, char **argv) {
   save_to_file(first_project);
 }
 
-struct project *search_prj_by_name(char *project_name, struct project *prj) {
-  for (; prj != NULL; prj = prj->next) {
-    if (strcmp(prj->name, project_name) == 0) {
-      return prj;
-    }
+void activate_tui(struct project *first) {
+  WINDOW *w;
+  int i, ch, padding = 10;
+  char *project_names[project_length];
+  char item[PROJECT_NAME_LENGTH + padding];
+
+  /* printf("project_length: %lu\n", project_length); */
+  for (i = 0; i < project_length; ++i) {
+    printf("pr: %p, name: %s\n", indexable_projects[i], indexable_projects[i]->name);
   }
-  return NULL;
+  return;
+  initscr();
+  w = newwin(10, 10, 2, 2);
+  box(w, 0, 0);
+  for (i = 0; first != NULL; first = first->next, ++i) {
+    if (i == 0) wattron(w, A_STANDOUT);
+    else wattroff(w, A_STANDOUT);
+    sprintf(item, "%-10s", first->name);
+    mvwprintw(w, i + 1, 2, "%s", first->name);
+
+    project_names[i] = (char *)malloc(PROJECT_NAME_LENGTH);
+    strncpy(project_names[i], first->name, PROJECT_NAME_LENGTH);
+  }
+  wrefresh(w);
+  getch();
+  i = 0;
+  noecho();
+  keypad(w, TRUE);
+  curs_set(0);
+
+  /* while((ch = wgetch(w)) != 'q') { */
+  /*   mvwprintw(w, i+1, 2, "%s", ) */
+  /* } */
+
+  getch();
+  delwin(w);
+  endwin();
 }
 
 void activate_project(struct project *prj) {
