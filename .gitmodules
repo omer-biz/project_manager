@@ -1,0 +1,6 @@
+[submodule "lib/termbox2"]
+	path = lib/termbox2
+	url = https://github.com/termbox/termbox2.git
+[submodule "lib/nxjson"]
+	path = lib/nxjson
+	url = https://github.com/omer-biz/nxjson.git

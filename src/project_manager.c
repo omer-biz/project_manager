@@ -11,7 +11,8 @@
 #include <libgen.h>
 #include <sys/wait.h>
 
-#include "nxjson/nxjson.h"
+#include <nxjson.h>
+#include <termbox.h>
 
 #include "config.h"
 #include "project.h"
@@ -63,45 +64,65 @@ int main(int argc, char **argv) {
   }
 
   save_to_file(first_project);
+  return ret; 
 }
 
 void activate_tui(struct project *first) {
-  WINDOW *w;
-  int i, ch, padding = 10;
-  char *project_names[project_length];
-  char item[PROJECT_NAME_LENGTH + padding];
+  tb_init();
+  tb_shutdown();
 
-  /* printf("project_length: %lu\n", project_length); */
-  for (i = 0; i < project_length; ++i) {
-    printf("pr: %p, name: %s\n", indexable_projects[i], indexable_projects[i]->name);
-  }
-  return;
-  initscr();
-  w = newwin(10, 10, 2, 2);
-  box(w, 0, 0);
-  for (i = 0; first != NULL; first = first->next, ++i) {
-    if (i == 0) wattron(w, A_STANDOUT);
-    else wattroff(w, A_STANDOUT);
-    sprintf(item, "%-10s", first->name);
-    mvwprintw(w, i + 1, 2, "%s", first->name);
+/*   WINDOW *w; */
+/*   int i, ch, padding = 10; */
+/*   char item[PROJECT_NAME_LENGTH + padding]; */
 
-    project_names[i] = (char *)malloc(PROJECT_NAME_LENGTH);
-    strncpy(project_names[i], first->name, PROJECT_NAME_LENGTH);
-  }
-  wrefresh(w);
-  getch();
-  i = 0;
-  noecho();
-  keypad(w, TRUE);
-  curs_set(0);
+/*   initscr(); */
+/*   w = newwin(8, PROJECT_NAME_LENGTH + 10, 1, 3); */
+/*   box(w, 0, 0); */
+/*   for (i = 0; i < project_length; ++i) { */
+/*     if (i == 0) */
+/*       wattron(w, A_STANDOUT); */
+/*     else */
+/*       wattroff(w, A_STANDOUT); */
+/*     sprintf(item, "%-20s", indexable_projects[i]->name); */
+/*     mvwprintw(w, i + 1, 2, "%s", item); */
+/*   } */
+/*   wrefresh(w); */
+/*   i = 0; */
+/*   noecho(); */
+/*   keypad(w, TRUE); */
+/*   curs_set(0); */
 
-  /* while((ch = wgetch(w)) != 'q') { */
-  /*   mvwprintw(w, i+1, 2, "%s", ) */
-  /* } */
-
-  getch();
-  delwin(w);
-  endwin();
+/*   while ((ch = wgetch(w)) != 'q') { */
+/*     sprintf(item, "%-8s", indexable_projects[i]->name); */
+/*     mvwprintw(w, i+1, 2, "%s", item); */
+/*     switch (ch) { */
+/*       case KEY_UP: */
+/*       case 'k': */
+/*         --i; */
+/*         i = (i < 0) ? project_length - 1 : i; */
+/*         break; */
+/*       case KEY_DOWN: */
+/*       case 'j': */
+/*         ++i; */
+/*         i = (i > project_length - 1) ? 0 : i; */
+/*         break; */
+/*       case 'l': */
+/*       case KEY_ENTER: */
+/*         goto break_loop; */
+/*         break; */
+/*     } */
+/*     wattron(w, A_STANDOUT); */
+/*     sprintf(item, "%-8s", indexable_projects[i]->name); */
+/*     mvwprintw(w, i+1, 2, "%s", item); */
+/*     wattroff(w, A_STANDOUT); */
+/*   } */
+/* break_loop: */
+/*   addstr("You chose: "); */
+/*   addstr(indexable_projects[i]->name); */
+/*   getch(); */
+/*   delwin(w); */
+/*   endwin(); */
+/*   /1* activate_project(indexable_projects[i]); *1/ */
 }
 
 void activate_project(struct project *prj) {

@@ -1,18 +1,27 @@
-SRC = src/argp_config.c src/main.c src/project.c src/nxjson/nxjson.c
-OBJ = ${SRC:.c=.o}
- 
-pm: ${OBJ} 
-	cc -O3 -o $@ ${OBJ}
-	strip pm
+include config.mk
 
-dbg: ${OBJ}
-	cc -g -o $@ ${OBJ}
-	gdb -q ./dbg
+SRC    := $(wildcard ${SRCDIR}/*.c)
+OBJ    := ${SRC:${SRCDIR}/%.c=${BUILDDIR}/%.o}
 
-tui: ${OBJ}
-	cc -lncurses -o pm ${OBJ}
+all: $(BIN)
 
-.PHONY: clean
+$(BIN): $(OBJ) $(LIBARC)
+	$(CC) -o $@ $(CFLAGS) $+
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p ${@D}
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TBARC):
+	$(MAKE) -C $(TBDIR) $(TBLIB)
+
+$(NJARC):
+	$(MAKE) -C $(NJDIR) $(NJLIB)
+
 clean:
-	rm -fv pm dbg ${OBJ}
+	$(MAKE) -C $(NJDIR) clean
+	$(MAKE) -C $(TBDIR) clean
+	rm -rf $(BUILDDIR)
+	rm -rf $(BIN)
 
+.PHONY: clean all
