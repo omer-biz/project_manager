@@ -1,2 +1,3 @@
 -I./lib/nxjson
 -I./lib/termbox2
+-I./include

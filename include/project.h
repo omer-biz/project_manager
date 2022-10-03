@@ -44,4 +44,12 @@ struct project *create_project(const char *name, const char *directory, double s
 
 struct project *search_prj_by_name(char *project_name, struct project *first);
 
+int load_projects_from_file(const char *filepath, struct project **prj, struct project **lprj);
+int save_to_file(struct project *first);
+int new_project_in_pwd(struct project **last, struct project **first, char *project_name);
+void list_all_projects(struct project *first);
+void activate_project(struct project *prj);
+void activate_tui();
+void setup_projectfile_path();
+
 #endif // PROJECT_H

@@ -18,6 +18,10 @@ $(TBARC):
 $(NJARC):
 	$(MAKE) -C $(NJDIR) $(NJLIB)
 
+install: all
+	cp -f ${BIN} ${PREFIX}/bin
+	chmod 755 ${PREFIX}/bin/${BIN}
+
 clean:
 	$(MAKE) -C $(NJDIR) clean
 	$(MAKE) -C $(TBDIR) clean
